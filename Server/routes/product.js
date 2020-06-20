@@ -79,7 +79,7 @@ router.put("/product/:id", async (req, res) => {
 
     res.json({
       status: true,
-      product: product,
+      updateProduct: product,
     });
   } catch {
     res.status(500).json({
@@ -90,5 +90,22 @@ router.put("/product/:id", async (req, res) => {
 });
 
 //DELETE request - delete a single product
+router.delete("/products/:id", async (req, res) => {
+  try {
+    let deletedProduct = await Product.findOneAndDelete({ _id: req.params.id });
+
+    if (deletedProduct) {
+      res.json({
+        status: true,
+        message: "Successfully deleted",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
 
 module.exports = router;
