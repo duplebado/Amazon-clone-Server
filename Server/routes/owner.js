@@ -31,7 +31,7 @@ router.get("/owners", async (req, res) => {
 
     res.json({
       sucess: true,
-      owner: owners,
+      owners: owners,
     });
   } catch (err) {
     res.status(500).json({
