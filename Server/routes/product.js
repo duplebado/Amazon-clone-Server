@@ -8,7 +8,7 @@ router.post("/products", async (req, res) => {
     product.title = req.body.title;
     product.description = req.body.description;
     product.photo = req.body.photo;
-    product.photo = req.body.photo;
+    product.price = req.body.price;
     product.stockQuantity = req.body.stockQuantity;
 
     await product.save();
@@ -60,6 +60,34 @@ router.get("/product/:id", async (req, res) => {
 });
 
 //PUT request - update a product
+router.put("/product/:id", async (req, res) => {
+  try {
+    let product = await Product.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: {
+          title: req.body.title,
+          description: req.body.description,
+          photo: req.body.photo,
+          price: req.body.price,
+          category: req.body.categoryID,
+          owner: req.body.ownerID,
+        },
+      },
+      { upsert: true }
+    );
+
+    res.json({
+      status: true,
+      product: product,
+    });
+  } catch {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
 
 //DELETE request - delete a single product
 
