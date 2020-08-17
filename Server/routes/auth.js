@@ -55,4 +55,36 @@ router.get("/auth/user", verifyToken, async (req, res) => {
   }
 });
 
+//Login Route
+router.post("/auth/login", async (req, res) => {
+  try {
+    const foundUser = await User.findOne({ email: req.body.email });
+    if (!foundUser) {
+      console.log("inside if condition");
+      res.status(403).json({
+        success: false,
+        message: "Authentication failed, User not found ",
+      });
+    } else {
+      if (foundUser.comparePassword(req.body.password)) {
+        let token = jwt.sign(foundUser.toJSON(), process.env.SECRET, {
+          expiresIn: 604800, // 1 week
+        });
+
+        res.json({ success: true, token: token });
+      } else {
+        res.status(403).json({
+          success: false,
+          message: "Authentication failed, wrong password",
+        });
+      }
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
 module.exports = router;
