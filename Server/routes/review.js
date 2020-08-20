@@ -4,6 +4,7 @@ const Product = require("../models/products");
 const verifyToken = require("../middlewares/verify-token");
 const upload = require("../middlewares/upload-photo");
 
+// Review post API
 router.post(
   "/reviews/:productID",
   [verifyToken, upload.single("photo")],
@@ -35,5 +36,25 @@ router.post(
     }
   }
 );
+
+router.get("/reviews/:productID", async (req, res) => {
+  try {
+    let productReviews = await Review.find({
+      productID: req.params.productID,
+    })
+      .populate("User")
+      .exec();
+
+    res.json({
+      success: true,
+      reviews: productReviews,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
 
 module.exports = router;
