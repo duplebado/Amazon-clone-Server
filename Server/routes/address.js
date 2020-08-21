@@ -32,10 +32,10 @@ router.post("/address", verifyToken, async (req, res) => {
   }
 });
 
-//GET all Address
-router.get("/addresses", async (req, res) => {
+//GET all Addresses
+router.get("/addresses", verifyToken, async (req, res) => {
   try {
-    let addresses = await Address.find();
+    let addresses = await Address.find({ user: req.decoded._id });
 
     if (response) {
       res.json({
