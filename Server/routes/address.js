@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Address = require("../models/address");
 const verifyToken = require("../middlewares/verify-token");
+const axios = require("axios");
 
 //POST request
 router.post("/address", verifyToken, async (req, res) => {
@@ -41,6 +42,25 @@ router.get("/addresses", verifyToken, async (req, res) => {
       res.json({
         success: true,
         addresses: addresses,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+//GET all Addresses
+router.get("/countries", async (req, res) => {
+  try {
+    let response = await axios.get("https://restCountries.eu/rest/v2/all");
+
+    if (response) {
+      res.json({
+        success: true,
+        countries: response.data,
       });
     }
   } catch (err) {
