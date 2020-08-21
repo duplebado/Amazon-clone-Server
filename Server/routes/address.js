@@ -32,6 +32,23 @@ router.post("/address", verifyToken, async (req, res) => {
   }
 });
 
-//GET request
+//GET all Address
+router.get("/addresses", async (req, res) => {
+  try {
+    let addresses = await Address.find();
+
+    if (response) {
+      res.json({
+        success: true,
+        addresses: addresses,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
 
 module.exports = router;
