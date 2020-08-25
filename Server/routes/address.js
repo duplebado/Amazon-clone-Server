@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Address = require("../models/address");
 const verifyToken = require("../middlewares/verify-token");
 const axios = require("axios");
-const user = require("../models/user");
+const User = require("../models/user");
 
 //POST request
 router.post("/address", verifyToken, async (req, res) => {
@@ -39,7 +39,7 @@ router.get("/addresses", verifyToken, async (req, res) => {
   try {
     let addresses = await Address.find({ user: req.decoded._id });
 
-    if (response) {
+    if (addresses) {
       res.json({
         success: true,
         addresses: addresses,
