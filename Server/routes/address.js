@@ -73,7 +73,7 @@ router.get("/address/:id", verifyToken, async (req, res) => {
 });
 
 // Update Addresses route
-router.put("/addresses/:id", verifyToken, async (req, res) => {
+router.put("/address/:id", verifyToken, async (req, res) => {
   try {
     let foundAddress = await Address.findOne({
       user: req.decoded._id,
