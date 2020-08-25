@@ -53,6 +53,25 @@ router.get("/addresses", verifyToken, async (req, res) => {
   }
 });
 
+//Get a single address
+router.get("/address/:id", verifyToken, async (req, res) => {
+  try {
+    let address = await Address.findOne({ _id: req.params.id });
+
+    if (address) {
+      res.json({
+        success: true,
+        address: address,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
 // Update Addresses route
 router.put("/addresses/:id", verifyToken, async (req, res) => {
   try {
