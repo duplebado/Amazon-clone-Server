@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Address = require("../models/address");
 const verifyToken = require("../middlewares/verify-token");
 const axios = require("axios");
+const user = require("../models/user");
 
 //POST request
 router.post("/address", verifyToken, async (req, res) => {
@@ -52,7 +53,87 @@ router.get("/addresses", verifyToken, async (req, res) => {
   }
 });
 
-//GET all Addresses
+// Update Addresses route
+router.put("/addresses/:id", verifyToken, async (req, res) => {
+  try {
+    let foundAddress = await Address.findOne({
+      user: req.decoded._id,
+      _id: req.params.id,
+    });
+    if (foundAddress) {
+      if (req.body.country) foundAddress.country = req.body.country;
+      if (req.body.fullName) foundAddress.fullName = req.body.fullName;
+      if (req.body.streetAddress)
+        foundAddress.streetAddress = req.body.streetAddress;
+      if (req.body.city) foundAddress.city = req.body.city;
+      if (req.body.state) foundAddress.state = req.body.state;
+      if (req.body.zipCode) foundAddress.zipCode = req.body.zipCode;
+      if (req.body.phoneNumber) foundAddress.phoneNumber = req.body.phoneNumber;
+      if (req.body.deliverInstructions)
+        foundAddress.deliverInstructions = req.body.deliverInstructions;
+      if (req.body.securityCode)
+        foundAddress.securityCode = req.body.securityCode;
+    }
+
+    await foundAddress.save();
+
+    res.json({
+      success: true,
+      message: "Successfully updated the address",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+// Delete Address route
+router.delete("/addresses/:id", verifyToken, async (req, res) => {
+  try {
+    let deletedAddress = await Address.remove({
+      user: req.decoded._id,
+      _id: req.params._id,
+    });
+
+    if (deletedAddress) {
+      res.json({
+        success: true,
+        message: "Address successfully deleted",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+//Set Default Address API
+router.put("/addresses/set/default", verifyToken, async (req, res) => {
+  try {
+    let updatedUserDefaultAddress = await user.findOneAndUpdate(
+      { _id: req.decoded._id },
+      { $set: { address: req.body.id } }
+    );
+
+    if (updatedUserDefaultAddress) {
+      res.json({
+        success: true,
+        message: "Successfully set this address as default",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+//GET all Countries
 router.get("/countries", async (req, res) => {
   try {
     let response = await axios.get("https://restCountries.eu/rest/v2/all");
