@@ -94,7 +94,7 @@ router.delete("/addresses/:id", verifyToken, async (req, res) => {
   try {
     let deletedAddress = await Address.remove({
       user: req.decoded._id,
-      _id: req.params._id,
+      _id: req.params.id,
     });
 
     if (deletedAddress) {
