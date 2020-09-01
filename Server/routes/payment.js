@@ -67,6 +67,11 @@ router.post("/payment", verifyToken, (req, res) => {
       order.owner = req.decoded._id;
       order.estimatedDelivery = req.body.estimatedDelivery;
       await order.save();
+
+      res.json({
+        success: true,
+        message: "Successsfully made a payment",
+      });
     })
     .catch((err) => {
       res.status(500).json({
