@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const moment = require("moment");
-const stripe = require("stripe");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const verifyToken = require("../middlewares/verify-token");
 const Order = require("../models/order");
 
@@ -41,7 +41,7 @@ router.post("/payment", verifyToken, (req, res) => {
       email: req.decoded.email,
     })
     .then((customer) => {
-      return stripe.customers.createdSource(customer.id, {
+      return stripe.customers.createSource(customer.id, {
         source: "tok_visa",
       });
     })
@@ -59,7 +59,7 @@ router.post("/payment", verifyToken, (req, res) => {
       cart.map((product) => {
         order.products.push({
           productID: product._id,
-          quantity: parseInt(product, quantity),
+          quantity: parseInt(product.quantity),
           price: product.price,
         });
       });
@@ -74,6 +74,7 @@ router.post("/payment", verifyToken, (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({
         success: false,
         message: err.message,
