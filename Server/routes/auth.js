@@ -86,7 +86,6 @@ router.post("/auth/login", async (req, res) => {
   try {
     const foundUser = await User.findOne({ email: req.body.email });
     if (!foundUser) {
-      console.log("inside if condition");
       res.status(403).json({
         success: false,
         message: "Authentication failed, User not found ",
